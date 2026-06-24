@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abinash · Dev Hub + Game</title>
+    <style>
+        /* ───────── RESET & ROOT ───────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg1: #050816;
+            --bg2: #0b1220;
+            --card-bg: rgba(17, 24, 39, 0.78);
+            --card-border: rgba(255, 255, 255, 0.10);
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --glow-purple: rgba(124, 58, 237, 0.35);
+            --glow-cyan: rgba(6, 182, 212, 0.30);
+            --radius: 20px;
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(ellipse at 10% 10%, rgba(124, 58, 237, 0.30), transparent 55%),
+                radial-gradient(ellipse at 90% 90%, rgba(6, 182, 212, 0.22), transparent 50%),
+                linear-gradient(145deg, var(--bg1), var(--bg2));
+            padding: 24px 20px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* ───────── MAIN WRAPPER ───────── */
+        .app {
+            width: 100%;
+            max-width: 1360px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* ───────── HERO ───────── */
+        .hero {
+            text-align: center;
+            padding: 18px 0 8px;
+            position: relative;
+        }
+        .hero .badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--muted);
+            font-size: 0.8rem;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            backdrop-filter: blur(8px);
+        }
+        .hero h1 {
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            margin: 14px 0 6px;
+            background: linear-gradient(135deg, #ffffff 20%, #c4b5fd 55%, #67e8f9 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+            text-shadow: 0 0 60px rgba(124, 58, 237, 0.18);
+            letter-spacing: -0.5px;
+        }
+        .hero .sub {
+            color: var(--muted);
+            font-size: 1.05rem;
+            max-width: 620px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ───────── TWO‑COLUMN LAYOUT ───────── */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        /* ─── LEFT: CARD BOARD ─── */
+        .board {
+            position: relative;
+            min-height: 540px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(2px);
+            padding: 18px 18px 24px;
+            transition: min-height 0.2s;
+        }
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 6px 16px 6px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .board-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+        }
+        .board-header h2 span {
+            color: var(--text);
+            font-weight: 700;
+        }
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--muted);
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .reset-btn:hover {
+            background: rgba(124, 58, 237, 0.20);
+            border-color: rgba(124, 58, 237, 0.35);
+            color: #fff;
+        }
+        .reset-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ─── CARDS GRID (absolutely positioned) ─── */
+        .card-grid {
+            position: relative;
+            width: 100%;
+            min-height: 460px;
+        }
+
+        .card-item {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: calc(50% - 10px);
+            padding: 14px 16px 14px 14px;
+            border-radius: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
+            cursor: grab;
+            user-select: none;
+            z-index: 1;
+            will-change: transform, left, top;
+            min-height: 70px;
+            touch-action: none;
+        }
+        .card-item:hover {
+            border-color: rgba(103, 232, 249, 0.30);
+            box-shadow: 0 14px 44px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(103, 232, 249, 0.06);
+            z-index: 5;
+        }
+        .card-item.dragging {
+            cursor: grabbing;
+            z-index: 1000 !important;
+            transform: scale(1.04) rotate(0.5deg);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), 0 0 0 2px rgba(124, 58, 237, 0.25);
+            border-color: rgba(124, 58, 237, 0.40);
+            transition: box-shadow 0.15s, transform 0.15s;
+        }
+        .card-item.dropped {
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+        }
+        .card-item .icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            color: #fff;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        .card-item .info {
+            flex: 1;
+            min-width: 0;
+            text-align: left;
+        }
+        .card-item .info .title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+        .card-item .info .url {
+            font-size: 0.72rem;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .card-item .drag-handle {
+            color: rgba(255, 255, 255, 0.20);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            padding: 4px;
+            transition: color 0.25s;
+            line-height: 1;
+        }
+        .card-item:hover .drag-handle {
+            color: rgba(255, 255, 255, 0.50);
+        }
+
+        /* icon themes */
+        .linkedin {
+            background: linear-gradient(135deg, #0a66c2, #1d9bf0);
+        }
+        .github {
+            background: linear-gradient(135deg, #1a1a2e, #374151);
+        }
+        .leetcode {
+            background: linear-gradient(135deg, #f5a623, #e07b00);
+        }
+        .hackerrank {
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #0a2e0a;
+        }
+        .gfg {
+            background: linear-gradient(135deg, #1a7a3a, #34d058);
+        }
+        .codechef {
+            background: linear-gradient(135deg, #5b3e2e, #8b6b4b);
+        }
+        .hackerearth {
+            background: linear-gradient(135deg, #2d2b55, #6366f1);
+        }
+        .atcoder {
+            background: linear-gradient(135deg, #1e40af, #38bdf8);
+        }
+        .mlearn {
+            background: linear-gradient(135deg, #005a9e, #4f9df0);
+        }
+        .devto {
+            background: linear-gradient(135deg, #0f172a, #334155);
+        }
+        .medium {
+            background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
+        }
+
+        /* ─── RIGHT: GAME PANEL ─── */
+        .game-panel {
+            background: rgba(17, 24, 39, 0.70);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 22px 18px 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: sticky;
+            top: 20px;
+            transition: transform 0.3s ease;
+            align-items: center;
+        }
+        .game-panel .gp-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .game-panel .gp-header .emoji-big {
+            font-size: 1.4rem;
+            line-height: 1;
+        }
+        .game-panel .gp-header .score-board {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 14px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            color: #67e8f9;
+            font-weight: 600;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            max-width: 280px;
+            aspect-ratio: 280 / 400;
+            background: #1e293b;
+            border-radius: 16px;
+            display: block;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            touch-action: none;
+            image-rendering: pixelated;
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 280px;
+            flex-wrap: wrap;
+        }
+        .game-actions button {
+            flex: 1;
+            min-width: 70px;
+            padding: 8px 0;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .game-actions button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+        .game-actions button:active {
+            transform: scale(0.95);
+        }
+        .game-actions .primary {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.35), rgba(6, 182, 212, 0.25));
+            border-color: rgba(124, 58, 237, 0.25);
+        }
+        .game-actions .primary:hover {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.55), rgba(6, 182, 212, 0.40));
+            border-color: rgba(124, 58, 237, 0.45);
+        }
+        .game-hint {
+            color: var(--muted);
+            font-size: 0.7rem;
+            opacity: 0.6;
+            text-align: center;
+            letter-spacing: 0.3px;
+            margin-top: 2px;
+        }
+
+        /* ───────── RESPONSIVE ───────── */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr 280px;
+                gap: 22px;
+            }
+            .card-item {
+                width: calc(50% - 8px);
+                padding: 12px 12px 12px 10px;
+                min-height: 62px;
+            }
+            .card-item .icon {
+                width: 36px;
+                height: 36px;
+                font-size: 0.75rem;
+                border-radius: 10px;
+            }
+            .card-item .info .title {
+                font-size: 0.85rem;
+            }
+            .card-item .info .url {
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+            .game-panel {
+                position: static;
+                max-width: 400px;
+                margin: 0 auto;
+                width: 100%;
+            }
+            #gameCanvas {
+                max-width: 100%;
+            }
+            .board {
+                min-height: 400px;
+            }
+            .card-grid {
+                min-height: 380px;
+            }
+            .card-item {
+                width: calc(50% - 8px);
+                padding: 12px 12px 12px 10px;
+                min-height: 58px;
+            }
+            .card-item .icon {
+                width: 34px;
+                height: 34px;
+                font-size: 0.7rem;
+            }
+            .card-item .info .title {
+                font-size: 0.82rem;
+            }
+            .card-item .info .url {
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .card-item {
+                width: calc(100% - 4px);
+                min-height: 54px;
+            }
+            .board {
+                padding: 10px 8px 16px;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .game-panel {
+                padding: 16px 12px 18px;
+            }
+            .reset-btn {
+                font-size: 0.7rem;
+                padding: 4px 12px;
+            }
+        }
+
+        /* ───────── FOOTER ───────── */
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.8rem;
+            padding: 6px 0 2px;
+            opacity: 0.5;
+            letter-spacing: 0.3px;
+        }
+
+        /* ───────── SCROLLBAR ───────── */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(124, 58, 237, 0.35);
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- ═══ HERO ═══ -->
+        <header class="hero">
+            <span class="badge">✦ Developer Profiles</span>
+            <h1>Abinash Behera</h1>
+            <p class="sub">
+                Full‑stack developer · drag cards to rearrange · play Flappy Bird
+            </p>
+        </header>
+
+        <!-- ═══ DASHBOARD ═══ -->
+        <div class="dashboard">
+
+            <!-- ─── LEFT: DRAGGABLE CARDS ─── -->
+            <section class="board">
+                <div class="board-header">
+                    <h2>📌 <span>Profile Cards</span></h2>
+                    <button class="reset-btn" id="resetPositions">⟳ Reset layout</button>
+                </div>
+                <div class="card-grid" id="cardGrid">
+                    <!-- cards injected by JS -->
+                </div>
+            </section>
+
+            <!-- ─── RIGHT: FLAPPY BIRD GAME ─── -->
+            <aside class="game-panel" id="gamePanel">
+                <div class="gp-header">
+                    <span class="emoji-big">🐦</span>
+                    <span>Flappy Bird</span>
+                    <span class="score-board" id="gameScoreDisplay">0</span>
+                </div>
+
+                <canvas id="gameCanvas" width="280" height="400"></canvas>
+
+                <div class="game-actions">
+                    <button class="primary" id="flapBtn">⬆ Flap!</button>
+                    <button id="restartGameBtn">⟳ Restart</button>
+                </div>
+                <div class="game-hint">Tap canvas, press Space, or click Flap!</div>
+            </aside>
+
+        </div>
+
+        <div class="footer">drag &amp; drop · play the game</div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════
+        //  1.  CARD DATA & DRAG LOGIC
+        // ═══════════════════════════════════════
+        const cardsData = [
+            { id: 'linkedin', title: 'LinkedIn', url: 'www.linkedin.com/in/abinashbehera9898', href: 'https://www.linkedin.com/in/abinashbehera9898',
+                icon: 'in', cls: 'linkedin' },
+            { id: 'github', title: 'GitHub', url: 'github.com/lucky-world29', href: 'https://github.com/lucky-world29',
+                icon: 'GH', cls: 'github' },
+            { id: 'leetcode', title: 'LeetCode', url: 'leetcode.com/u/abinash_98', href: 'https://leetcode.com/u/abinash_98/',
+                icon: 'LC', cls: 'leetcode' },
+            { id: 'hackerrank', title: 'HackerRank', url: 'hackerrank.com/profile/abinashbehera981',
+                href: 'https://www.hackerrank.com/profile/abinashbehera981', icon: 'HR', cls: 'hackerrank' },
+            { id: 'gfg', title: 'GeeksforGeeks', url: 'geeksforgeeks.org/profile/luckyrex',
+                href: 'https://www.geeksforgeeks.org/profile/luckyrex', icon: 'GfG', cls: 'gfg' },
+            { id: 'codechef', title: 'CodeChef', url: 'codechef.com/users/abinashbehera',
+                href: 'https://www.codechef.com/users/abinashbehera', icon: 'CC', cls: 'codechef' },
+            { id: 'hackerearth', title: 'HackerEarth', url: 'hackerearth.com/@abinashbehera9898',
+                href: 'https://www.hackerearth.com/@abinashbehera9898/', icon: 'HE', cls: 'hackerearth' },
+            { id: 'atcoder', title: 'AtCoder', url: 'atcoder.jp/users/lucky_29', href: 'https://atcoder.jp/users/lucky_29',
+                icon: 'AT', cls: 'atcoder' },
+            { id: 'mlearn', title: 'Microsoft Learn', url: 'learn.microsoft.com/en-in/users/abinashbehera-8204',
+                href: 'https://learn.microsoft.com/en-in/users/abinashbehera-8204/', icon: 'MS', cls: 'mlearn' },
+            { id: 'devto', title: 'Dev.to', url: 'dev.to/abinash_behera_bc65de5516',
+                href: 'https://dev.to/abinash_behera_bc65de5516', icon: 'DEV', cls: 'devto' },
+            { id: 'medium', title: 'Medium', url: 'medium.com/@abinashbehera9898',
+                href: 'https://medium.com/@abinashbehera9898', icon: 'M', cls: 'medium' },
+        ];
+
+        const grid = document.getElementById('cardGrid');
+        const BOARD_PADDING = 12;
+        const GAP = 14;
+        let cardPositions = {};
+        let cardElements = {};
+        let columns = 2;
+        let cardWidth = 0;
+        let rowHeight = 0;
+
+        function computeLayout() {
+            const rect = grid.getBoundingClientRect();
+            const avail = rect.width - BOARD_PADDING * 2;
+            columns = Math.max(1, Math.min(2, Math.floor((avail + GAP) / (200 + GAP))));
+            if (window.innerWidth < 540) columns = 1;
+            cardWidth = (avail - (columns - 1) * GAP) / columns;
+            rowHeight = 70 + 14;
+        }
+
+        function buildCards() {
+            grid.innerHTML = '';
+            cardElements = {};
+            computeLayout();
+
+            cardsData.forEach((data, idx) => {
+                const col = idx % columns;
+                const row = Math.floor(idx / columns);
+                const left = BOARD_PADDING + col * (cardWidth + GAP);
+                const top = BOARD_PADDING + row * (rowHeight + GAP);
+
+                const el = document.createElement('a');
+                el.className = 'card-item';
+                el.href = data.href;
+                el.target = '_blank';
+                el.rel = 'noopener noreferrer';
+                el.dataset.id = data.id;
+                el.style.left = left + 'px';
+                el.style.top = top + 'px';
+                el.style.width = cardWidth + 'px';
+
+                cardPositions[data.id] = { left, top };
+
+                el.innerHTML = `
+              <div class="icon ${data.cls}">${data.icon}</div>
+              <div class="info">
+                <div class="title">${data.title}</div>
+                <div class="url">${data.url}</div>
+              </div>
+              <div class="drag-handle">⠿</div>
+            `;
+
+                grid.appendChild(el);
+                cardElements[data.id] = el;
+
+                el.addEventListener('mousedown', onDragStart);
+                el.addEventListener('touchstart', onDragStart, { passive: false });
+            });
+
+            const totalRows = Math.ceil(cardsData.length / columns);
+            const totalHeight = BOARD_PADDING * 2 + totalRows * (rowHeight + GAP) - GAP + 20;
+            grid.style.minHeight = Math.max(totalHeight, 400) + 'px';
+        }
+
+        function applyPositions(animate = true) {
+            for (const id in cardPositions) {
+                const el = cardElements[id];
+                if (!el) continue;
+                const pos = cardPositions[id];
+                if (animate) el.classList.add('dropped');
+                el.style.left = pos.left + 'px';
+                el.style.top = pos.top + 'px';
+                if (animate) setTimeout(() => el.classList.remove('dropped'), 400);
+            }
+        }
+
+        function resetPositions() {
+            computeLayout();
+            cardsData.forEach((data, idx) => {
+                const col = idx % columns;
+                const row = Math.floor(idx / columns);
+                const left = BOARD_PADDING + col * (cardWidth + GAP);
+                const top = BOARD_PADDING + row * (rowHeight + GAP);
+                cardPositions[data.id] = { left, top };
+            });
+            applyPositions(true);
+        }
+
+        let isDragging = false;
+        let dragTarget = null;
+        let dragId = null;
+        let offsetX = 0,
+            offsetY = 0;
+
+        function onDragStart(e) {
+            e.preventDefault();
+            const el = e.currentTarget;
+            const id = el.dataset.id;
+            if (!id) return;
+            if (e.target.closest('a') && e.target.tagName !== 'A') return;
+
+            isDragging = true;
+            dragTarget = el;
+            dragId = id;
+
+            const rect = el.getBoundingClientRect();
+            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            offsetX = clientX - rect.left;
+            offsetY = clientY - rect.top;
+
+            el.classList.add('dragging');
+            el.style.zIndex = 1000;
+            el.style.transition = 'none';
+
+            document.addEventListener('mousemove', onDragMove);
+            document.addEventListener('mouseup', onDragEnd);
+            document.addEventListener('touchmove', onDragMove, { passive: false });
+            document.addEventListener('touchend', onDragEnd, { passive: false });
+        }
+
+        function onDragMove(e) {
+            if (!isDragging || !dragTarget) return;
+            e.preventDefault();
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            const gridRect = grid.getBoundingClientRect();
+            let newLeft = clientX - gridRect.left - offsetX;
+            let newTop = clientY - gridRect.top - offsetY;
+            const maxX = gridRect.width - parseFloat(dragTarget.style.width) - 8;
+            const maxY = gridRect.height - 70 - 8;
+            newLeft = Math.max(4, Math.min(maxX, newLeft));
+            newTop = Math.max(4, Math.min(maxY, newTop));
+            dragTarget.style.left = newLeft + 'px';
+            dragTarget.style.top = newTop + 'px';
+            dragTarget.style.transition = 'none';
+            if (dragId) cardPositions[dragId] = { left: newLeft, top: newTop };
+        }
+
+        function onDragEnd(e) {
+            if (!isDragging || !dragTarget) { cleanupDrag(); return; }
+            const id = dragId;
+            if (id && cardPositions[id]) {
+                const pos = cardPositions[id];
+                dragTarget.style.left = pos.left + 'px';
+                dragTarget.style.top = pos.top + 'px';
+                dragTarget.style.transition =
+                'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.25s ease, top 0.25s ease';
+                dragTarget.classList.remove('dragging');
+                dragTarget.classList.add('dropped');
+                setTimeout(() => { if (dragTarget) dragTarget.classList.remove('dropped'); }, 400);
+            }
+            if (dragTarget) { dragTarget.style.zIndex = '';
+                dragTarget.style.transition = ''; }
+            cleanupDrag();
+        }
+
+        function cleanupDrag() {
+            if (dragTarget) { dragTarget.style.pointerEvents = '';
+                dragTarget.classList.remove('dragging');
+                dragTarget.style.zIndex = '';
+                dragTarget.style.transition = ''; }
+            isDragging = false;
+            dragTarget = null;
+            dragId = null;
+            document.removeEventListener('mousemove', onDragMove);
+            document.removeEventListener('mouseup', onDragEnd);
+            document.removeEventListener('touchmove', onDragMove);
+            document.removeEventListener('touchend', onDragEnd);
+        }
+
+        document.getElementById('resetPositions').addEventListener('click', resetPositions);
+
+        // ─── resize observer ───
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => { if (!isDragging) resetPositions(); }, 300);
+        });
+
+        // ═══════════════════════════════════════
+        //  2.  FLAPPY BIRD GAME
+        // ═══════════════════════════════════════
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('gameScoreDisplay');
+
+        const W = 280,
+            H = 400;
+        const GROUND_Y = 370;
+        const GRAVITY = 0.45;
+        const JUMP_FORCE = -7.5;
+        const PIPE_WIDTH = 32;
+        const PIPE_GAP = 100;
+        const PIPE_SPEED = 2.2;
+        const PIPE_SPAWN_INTERVAL = 100; // frames
+
+        let bird = { x: 55, y: 200, radius: 9, vy: 0 };
+        let pipes = [];
+        let score = 0;
+        let gameState = 'waiting'; // 'waiting', 'playing', 'gameover'
+        let frame = 0;
+        let animId = null;
+        let bestScore = parseInt(localStorage.getItem('flappyBest')) || 0;
+
+        function resetGame() {
+            bird.y = 200;
+            bird.vy = 0;
+            pipes = [];
+            score = 0;
+            frame = 0;
+            gameState = 'waiting';
+            updateScoreDisplay();
+        }
+
+        function startGame() {
+            if (gameState === 'gameover') {
+                resetGame();
+                gameState = 'playing';
+                return;
+            }
+            if (gameState === 'waiting') {
+                gameState = 'playing';
+                // give a small initial jump
+                bird.vy = JUMP_FORCE;
+            }
+        }
+
+        function flap() {
+            if (gameState === 'gameover') {
+                resetGame();
+                gameState = 'playing';
+                bird.vy = JUMP_FORCE;
+                return;
+            }
+            if (gameState === 'waiting') {
+                gameState = 'playing';
+                bird.vy = JUMP_FORCE;
+                return;
+            }
+            if (gameState === 'playing') {
+                bird.vy = JUMP_FORCE;
+            }
+        }
+
+        function gameOver() {
+            gameState = 'gameover';
+            if (score > bestScore) {
+                bestScore = score;
+                localStorage.setItem('flappyBest', bestScore);
+            }
+        }
+
+        function updateScoreDisplay() {
+            scoreDisplay.textContent = gameState === 'gameover' ? `${score} (best ${bestScore})` : score;
+        }
+
+        // ─── pipes logic ───
+        function spawnPipe() {
+            const minY = 60;
+            const maxY = GROUND_Y - PIPE_GAP - 60;
+            const topHeight = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+            pipes.push({
+                x: W,
+                topHeight: topHeight,
+                bottomY: topHeight + PIPE_GAP,
+                scored: false
+            });
+        }
+
+        function updateGame() {
+            if (gameState !== 'playing') return;
+
+            // bird physics
+            bird.vy += GRAVITY;
+            bird.y += bird.vy;
+
+            // ground / ceiling collision
+            if (bird.y + bird.radius > GROUND_Y) {
+                bird.y = GROUND_Y - bird.radius;
+                gameOver();
+                updateScoreDisplay();
+                return;
+            }
+            if (bird.y - bird.radius < 0) {
+                bird.y = bird.radius;
+                bird.vy = 0;
+            }
+
+            // pipes
+            if (frame % PIPE_SPAWN_INTERVAL === 0) {
+                spawnPipe();
+            }
+
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                const p = pipes[i];
+                p.x -= PIPE_SPEED;
+
+                // collision detection
+                const birdLeft = bird.x - bird.radius;
+                const birdRight = bird.x + bird.radius;
+                const birdTop = bird.y - bird.radius;
+                const birdBottom = bird.y + bird.radius;
+
+                const pipeLeft = p.x;
+                const pipeRight = p.x + PIPE_WIDTH;
+
+                if (birdRight > pipeLeft && birdLeft < pipeRight) {
+                    if (birdTop < p.topHeight || birdBottom > p.bottomY) {
+                        gameOver();
+                        updateScoreDisplay();
+                        return;
+                    }
+                }
+
+                // scoring
+                if (!p.scored && p.x + PIPE_WIDTH < bird.x) {
+                    p.scored = true;
+                    score++;
+                    updateScoreDisplay();
+                }
+
+                // remove offscreen
+                if (p.x + PIPE_WIDTH < 0) {
+                    pipes.splice(i, 1);
+                }
+            }
+
+            // if bird falls below ground (should be caught, but safety)
+            if (bird.y > GROUND_Y) {
+                gameOver();
+                updateScoreDisplay();
+            }
+        }
+
+        // ─── drawing ───
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            // sky gradient
+            const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+            sky.addColorStop(0, '#0f172a');
+            sky.addColorStop(1, '#1e293b');
+            ctx.fillStyle = sky;
+            ctx.fillRect(0, 0, W, GROUND_Y);
+
+            // ground
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(0, GROUND_Y, W, 4);
+
+            // pipes
+            ctx.fillStyle = '#22c55e';
+            ctx.shadowColor = 'rgba(34, 197, 94, 0.3)';
+            ctx.shadowBlur = 8;
+            for (const p of pipes) {
+                // top pipe
+                ctx.fillRect(p.x, 0, PIPE_WIDTH, p.topHeight);
+                // top cap
+                ctx.fillRect(p.x - 4, p.topHeight - 12, PIPE_WIDTH + 8, 12);
+                // bottom pipe
+                ctx.fillRect(p.x, p.bottomY, PIPE_WIDTH, GROUND_Y - p.bottomY);
+                // bottom cap
+                ctx.fillRect(p.x - 4, p.bottomY, PIPE_WIDTH + 8, 12);
+            }
+            ctx.shadowBlur = 0;
+
+            // bird
+            ctx.shadowColor = 'rgba(251, 191, 36, 0.5)';
+            ctx.shadowBlur = 14;
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+            ctx.fill();
+            // eye
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(bird.x + 4, bird.y - 3, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(bird.x + 5, bird.y - 4, 1, 0, Math.PI * 2);
+            ctx.fill();
+            // beak
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.moveTo(bird.x + 10, bird.y);
+            ctx.lineTo(bird.x + 16, bird.y + 2);
+            ctx.lineTo(bird.x + 10, bird.y + 4);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // overlay messages
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 0;
+            if (gameState === 'waiting') {
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fillRect(0, 0, W, H);
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = 'bold 20px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('🐦 TAP TO START', W / 2, H / 2 - 10);
+                ctx.font = '14px "Segoe UI", sans-serif';
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillText('or press Space', W / 2, H / 2 + 30);
+            }
+
+            if (gameState === 'gameover') {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(0, 0, W, H);
+                ctx.fillStyle = '#f87171';
+                ctx.font = 'bold 26px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('💀 GAME OVER', W / 2, H / 2 - 40);
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = 'bold 18px "Segoe UI", sans-serif';
+                ctx.fillText(`Score: ${score}`, W / 2, H / 2 + 10);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '14px "Segoe UI", sans-serif';
+                ctx.fillText(`Best: ${bestScore}`, W / 2, H / 2 + 45);
+                ctx.fillStyle = '#c4b5fd';
+                ctx.font = '14px "Segoe UI", sans-serif';
+                ctx.fillText('Tap to Restart', W / 2, H / 2 + 85);
+            }
+
+            // current score overlay (during play)
+            if (gameState === 'playing') {
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(W / 2 - 30, 12, 60, 28);
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = 'bold 18px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(score, W / 2, 34);
+            }
+        }
+
+        // ─── game loop ───
+        function gameLoop() {
+            updateGame();
+            draw();
+            animId = requestAnimationFrame(gameLoop);
+            frame++;
+        }
+
+        // ─── event listeners ───
+        canvas.addEventListener('click', (e) => {
+            e.stopPropagation();
+            flap();
+        });
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            flap();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Space') {
+                e.preventDefault();
+                flap();
+            }
+        });
+
+        document.getElementById('flapBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            flap();
+        });
+
+        document.getElementById('restartGameBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            resetGame();
+            gameState = 'waiting';
+            updateScoreDisplay();
+        });
+
+        // ─── init ───
+        buildCards();
+        applyPositions(false);
+        resetGame();
+        updateScoreDisplay();
+        gameLoop();
+
+        // Resize observer for board
+        const ro = new ResizeObserver(() => {
+            if (!isDragging) resetPositions();
+        });
+        ro.observe(grid);
+
+        console.log('🚀 Drag cards & play Flappy Bird!');
+    </script>
+
+</body>
+</html>
